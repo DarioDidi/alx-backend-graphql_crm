@@ -8,28 +8,21 @@ from graphql import GraphQLError
 from django.db import transaction
 
 from .models import Customer, Product, Order
+from .filters import CustomerFilter, OrderFilter, ProductFilter
 
 
 class CustomerType(DjangoObjectType):
     class Meta:
         model = Customer
         interfaces = (graphene.relay.Node, )
-        filter_fields = {
-            'name': ['exact', 'icontains'],
-            'email': ['exact', 'icontains'],
-            'created_at': ['gte', 'lte']
-        }
+        filterset_class = CustomerFilter
 
 
 class ProductType(DjangoObjectType):
     class Meta:
         model = Product
         interfaces = (graphene.relay.Node,)
-        filter_fields = {
-            'name': ['exact', 'icontains'],
-            'price': ['gte', 'lte'],
-            'stock': ['gte', 'lte'],
-        }
+        filterset_class = ProductFilter
 
 
 class OrderType(DjangoObjectType):
@@ -38,10 +31,7 @@ class OrderType(DjangoObjectType):
     class Meta:
         model = Order
         interfaces = (graphene.relay.Node,)
-        filter_fields = {
-            'total_amount': ['gte', 'lte'],
-            'order_date': ['gte', 'lte'],
-        }
+        filterset_class = OrderFilter
 
 
 class CustomerInput(graphene.InputObjectType):
