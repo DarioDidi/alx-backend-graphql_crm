@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 ]
 
 
-GRAPHENE = {"SCHEMA": "crm.schema.schema"}
+GRAPHENE = {"SCHEMA": "schema.schema"}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
