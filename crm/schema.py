@@ -60,7 +60,7 @@ class CreateCustomer(graphene.Mutation):
     message = graphene.String()
 
     @staticmethod
-    def validate_phone(phone):
+    def validate_phone_format(phone):
         if phone and not re.match(r"^(\+\d{1,3}[-]?)?\d{7,10}$", phone):
             raise GraphQLError(
                 "Invalid phone format. Use +1234567890 or 123-456-7890")
