@@ -95,7 +95,7 @@ class BulkCreateCustomers(graphene.Mutation):
 
         for i, customer_input in enumerate(input):
             try:
-                CreateCustomer.validate_phone(customer_input.phone)
+                CreateCustomer.validate_phone_format(customer_input.phone)
                 customer = Customer.objects.create(
                     name=customer_input.name,
                     email=customer_input.email,
@@ -104,6 +104,7 @@ class BulkCreateCustomers(graphene.Mutation):
 
                 customers.append(customer)
 
+            # partial success by storing errors and continue
             except Exception as e:
                 errors.append(f"Row {i + 1}: {str(e)}")
 
