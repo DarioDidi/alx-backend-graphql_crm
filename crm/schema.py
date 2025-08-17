@@ -3,31 +3,14 @@ from decimal import Decimal
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-from graphene_django.rest_framework.mutation import SerializerMutation
+# from graphene_django.rest_framework.mutation import SerializerMutation
 from graphql import GraphQLError
 
 from django.db import transaction
-from django import forms
 
-from rest_framework import serializers
 
 from .models import Customer, Product, Order
 from .filters import CustomerFilter, OrderFilter, ProductFilter
-
-
-class CustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-
-
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
 
 
 class CustomerType(DjangoObjectType):
@@ -71,8 +54,8 @@ class OrderInput(graphene.InputObjectType):
     order_date = graphene.DateTime()
 
 
-# class CreateCustomer(graphene.Mutation):
-class CreateCustomer(SerializerMutation):
+class CreateCustomer(graphene.Mutation):
+    # class CreateCustomer(SerializerMutation):
     class Arguments:
         input = CustomerInput(required=True)
 
@@ -93,16 +76,18 @@ class CreateCustomer(SerializerMutation):
                 email=input.email,
                 phone=input.phone
             )
+            customer.full_clean()
             return CreateCustomer(
                 customer=customer,
                 message="Customer created successfully"
             )
+
         except Exception as e:
             raise GraphQLError(str(e))
 
 
-# class BulkCreateCustomers(graphene.Mutation):
-class BulkCreateCustomers(SerializerMutation):
+class BulkCreateCustomers(graphene.Mutation):
+    # class BulkCreateCustomers(SerializerMutation):
     class Arguments:
         input = graphene.List(CustomerInput, required=True)
 
@@ -122,6 +107,7 @@ class BulkCreateCustomers(SerializerMutation):
                     email=customer_input.email,
                     phone=customer_input.phone
                 )
+                customer.full_clean()
 
                 customers.append(customer)
 
@@ -132,8 +118,8 @@ class BulkCreateCustomers(SerializerMutation):
         return BulkCreateCustomers(customers=customers, errors=errors)
 
 
-# class CreateProduct(graphene.Mutation):
-class CreateProduct(SerializerMutation):
+class CreateProduct(graphene.Mutation):
+    # class CreateProduct(SerializerMutation):
     class Arguments:
         input = ProductInput(required=True)
 
@@ -150,11 +136,12 @@ class CreateProduct(SerializerMutation):
             price=Decimal(input.price),
             stock=input.stock if input.stock is not None else 0
         )
+        product.full_clean()
         return CreateProduct(product=product)
 
 
-# class CreateOrder(graphene.Mutation):
-class CreateOrder(SerializerMutation):
+class CreateOrder(graphene.Mutation):
+    # class CreateOrder(SerializerMutation):
     class Arguments:
         input = OrderInput(required=True)
 
@@ -188,7 +175,7 @@ class CreateOrder(SerializerMutation):
             order_date=input.order_date if input.order_date else None
         )
         order.products.set(products)
-
+        order.full_clean()
         return CreateOrder(order=order)
 
 
