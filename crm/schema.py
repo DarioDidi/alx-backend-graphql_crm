@@ -177,6 +177,7 @@ class CreateOrder(graphene.Mutation):
             total_amount=total_amount,
             order_date=input.order_date if input.order_date else None
         )
+
         order.products.set(products)
         order.full_clean()
         order.save()
