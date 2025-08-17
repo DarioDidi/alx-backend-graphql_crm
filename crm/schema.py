@@ -77,6 +77,7 @@ class CreateCustomer(graphene.Mutation):
                 phone=input.phone
             )
             customer.full_clean()
+            customer.save()
             return CreateCustomer(
                 customer=customer,
                 message="Customer created successfully"
@@ -108,6 +109,7 @@ class BulkCreateCustomers(graphene.Mutation):
                     phone=customer_input.phone
                 )
                 customer.full_clean()
+                customer.save()
 
                 customers.append(customer)
 
@@ -137,6 +139,7 @@ class CreateProduct(graphene.Mutation):
             stock=input.stock if input.stock is not None else 0
         )
         product.full_clean()
+        product.save()
         return CreateProduct(product=product)
 
 
@@ -176,6 +179,7 @@ class CreateOrder(graphene.Mutation):
         )
         order.products.set(products)
         order.full_clean()
+        order.save()
         return CreateOrder(order=order)
 
 
