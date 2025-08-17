@@ -71,7 +71,7 @@ class CreateCustomer(graphene.Mutation):
     def mutate(self, info, input):
         try:
             CreateCustomer.validate_phone(input.phone)
-            customer = Customer.objects.create(
+            customer = Customer(
                 name=input.name,
                 email=input.email,
                 phone=input.phone
@@ -103,7 +103,7 @@ class BulkCreateCustomers(graphene.Mutation):
         for i, customer_input in enumerate(input):
             try:
                 CreateCustomer.validate_phone_format(customer_input.phone)
-                customer = Customer.objects.create(
+                customer = Customer(
                     name=customer_input.name,
                     email=customer_input.email,
                     phone=customer_input.phone
@@ -133,7 +133,7 @@ class CreateProduct(graphene.Mutation):
         if input.stock and input.stock < 0:
             raise GraphQLError("Stock cannot be negative")
 
-        product = Product.objects.create(
+        product = Product(
             name=input.name,
             price=Decimal(input.price),
             stock=input.stock if input.stock is not None else 0
@@ -172,7 +172,7 @@ class CreateOrder(graphene.Mutation):
                 raise GraphQLError(
                     f"Product with ID {product_id} does not exist")
 
-        order = Order.objects.create(
+        order = Order(
             customer=customer,
             total_amount=total_amount,
             order_date=input.order_date if input.order_date else None
