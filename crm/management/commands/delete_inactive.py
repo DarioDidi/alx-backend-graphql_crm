@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
-from crm.models import Customer, Order
-import logging
+from crm.models import Customer
+# import logging
 
 
 class Command(BaseCommand):

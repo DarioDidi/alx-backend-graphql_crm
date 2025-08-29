@@ -195,11 +195,49 @@ class Query(graphene.ObjectType):
         return Customer.objects.get(pk=id)
 
 
+class UpdateLowStockProducts(graphene.Mutaation):
+    class Arguments:
+        pass
+
+    products = graphene.List(ProductType)
+    message = graphene.String()
+    success = graphene.Boolean()
+
+    def mutate(self, info):
+        from django.db import transaction
+
+        try:
+            with transaction.atomic():
+                low_stock_products = Product.objects.filter(stock__lt=10)
+                updated_products = []
+
+                # Increments their stock by 10 (simulating restocking).
+                for product in low_stock_products:
+                    product.stock += 10
+                    product.save()
+                    updated_products.append(product)
+
+                return UpdateLowStockProducts(
+                    product=updated_products,
+                    message=f"Updated {len(updated_products)}"
+                    f" low-stock products",
+                    success=True
+                )
+
+        except Exception as e:
+            return UpdateLowStockProducts(
+                products=[],
+                message=f"Error updating low-stock products: {str(e)}",
+                success=False
+            )
+
+
 class Mutation(graphene.ObjectType):
     create_customer = CreateCustomer.Field()
     bulk_create_customers = BulkCreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+    update_low_stock_products = UpdateLowStockProducts.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

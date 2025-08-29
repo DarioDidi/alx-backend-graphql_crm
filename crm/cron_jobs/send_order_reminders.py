@@ -2,7 +2,7 @@ import os
 import sys
 import django
 import requests
-import json
+# import json
 from datetime import datetime, timedelta
 
 

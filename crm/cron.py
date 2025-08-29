@@ -3,11 +3,14 @@ import os
 import django
 from datetime import datetime
 import requests
-import json
+# import json
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'alx_backend_graphql_crm.settings')
 django.setup()
+
+
+GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
 
 
 def log_crm_heartbeat():
@@ -20,7 +23,6 @@ def log_crm_heartbeat():
     order_count = Order.objects.count()
     message = f"{timestamp} CRM is alive - Customers: {customer_count},"
     f"Products: {product_count}, Orders: {order_count}"
-    GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
     try:
         response = requests.post(
             GRAPHQL_ENDPOINT,
@@ -37,3 +39,54 @@ def log_crm_heartbeat():
         message += f" - GraphQL check failed: {str(e)}"
 
     return message
+
+
+def update_low_stock():
+    try:
+        response = requests.post(
+            GRAPHQL_ENDPOINT,
+            json={'query': '''
+                mutation {
+                updateLowStockProducts {
+                    success
+                    message
+                    product{
+                        id
+                        name
+                        stock
+                        price
+                    }
+
+                }
+            }
+            '''},
+            headers={'Content-Type': 'application/json'},
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            data = result.get('data', {}).get('updateLowStockProducts', {})
+
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            log_message = f"{timestamp} - "
+            f"{data.get('message', 'Unknown result')}\n"
+
+            if data.get('success') and data.get('products'):
+                for product in data['products']:
+                    log_message += f"  {product['name']}: {product['stock']}"
+                    f" units (${float(product['price']):.2f})\n"
+
+            with open('/tmp/low_stock_updates_log.txt', 'a') as f:
+                f.write(log_message + "\n")
+
+            return True
+        else:
+            raise Exception(f"HTTP {response.status_code}")
+
+    except Exception as e:
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        error_msg = f"{timestamp} - Error updating low stock: {str(e)}\n"
+        with open('/tmp/low_stock_updates_log.txt', 'a') as f:
+            f.write(error_msg)
+        return False
