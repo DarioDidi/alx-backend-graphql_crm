@@ -56,3 +56,14 @@ View scheduled tasks:
 ```bash
 celery -A crm inspect scheduled
 ```
+
+Verify logs in /tmp/crm_report_log.txt.
+```bash
+cat /tmp/crm_report_log.txt.
+```
+OR
+
+```bash
+watch /tmp/crm_report_log.txt.
+```
+ 

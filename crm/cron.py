@@ -4,15 +4,15 @@ import django
 from datetime import datetime
 import requests
 # import json
-from gql.transport.requests import RequestsHTTPTransport
-from gql import gql, Client
+# from gql.transport.requests import RequestsHTTPTransport
+# from gql import gql, Client
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'alx-backend-graphql_crm.settings')
 django.setup()
 
 
-GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
+GRAPHQL_ENDPOINT = "http://localhost:8000/graphql/"
 
 
 def log_crm_heartbeat():

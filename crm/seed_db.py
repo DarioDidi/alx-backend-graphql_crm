@@ -32,7 +32,8 @@ def execute_graphql(query, variables=None):
 # def clear_existing_data():
 #    """Clear all existing data (optional)"""
 #    print("Clearing existing data...")
-#    # Note: You would need to implement delete mutations in your schema for this
+#    # Note: You would need to implement delete mutations
+#       in your schema for this
 #    # This is just a placeholder showing how you might do it
 #    query = """
 #    mutation {
@@ -105,7 +106,8 @@ def create_products(count=10):
         """
         variables = {
             "input": {
-                "name": f"{random.choice(categories)} {fake.word().capitalize()}",
+                "name": f"{random.choice(categories)}"
+                f" {fake.word().capitalize()}",
                 # Convert to string for Decimal
                 "price": str(round(random.uniform(5, 1000), 2)),
                 "stock": random.randint(0, 100)

@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import django
-import requests
+# import requests
 # import json
 from datetime import datetime, timedelta
 from gql import Client, gql
