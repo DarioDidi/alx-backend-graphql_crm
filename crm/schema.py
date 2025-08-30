@@ -10,6 +10,7 @@ from django.db import transaction
 
 
 from crm.models import Customer, Product, Order
+# from crm.models import Product
 from .filters import CustomerFilter, OrderFilter, ProductFilter
 
 
