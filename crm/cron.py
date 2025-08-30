@@ -4,9 +4,11 @@ import django
 from datetime import datetime
 import requests
 # import json
+from gql.transport.requests import RequestsHTTPTransport
+from gql import gql, Client
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'alx_backend_graphql_crm.settings')
+                      'alx-backend-graphql_crm.settings')
 django.setup()
 
 
@@ -37,6 +39,9 @@ def log_crm_heartbeat():
             message += " - GraphQL endpoint not responsive"
     except Exception as e:
         message += f" - GraphQL check failed: {str(e)}"
+
+    with open('/tmp/crm_heartbeat_log.txt', 'a') as f:
+        f.write(message + "\n")
 
     return message
 

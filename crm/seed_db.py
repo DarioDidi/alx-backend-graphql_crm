@@ -53,26 +53,34 @@ def create_customers(count=5):
     customers = []
 
     for _ in range(count):
+        print("in create customers for loop")
         query = """
         mutation CreateCustomer($input: CustomerInput!) {
             createCustomer(input: $input) {
                 customer {
-                    id
+                    databaseId
                     name
                     email
                 }
             }
         }
         """
+
         variables = {
             "input": {
                 "name": fake.name(),
                 "email": fake.unique.email(),
-                "phone": fake.phone_number()[:20]
+                # "phone": fake.phone_number()[:20]
+                "phone": '+123456789'
             }
         }
+
         result = execute_graphql(query, variables)
-        customers.append(result['data']['createCustomer']['customer'])
+        if result:
+            print("gql result ready:", result)
+            customers.append(result['data']['createCustomer']['customer'])
+        else:
+            print("gql ERROR result:", result)
 
     return customers
 
@@ -88,7 +96,7 @@ def create_products(count=10):
         mutation CreateProduct($input: ProductInput!) {
             createProduct(input: $input) {
                 product {
-                    id
+                    databaseId
                     name
                     price
                 }
@@ -112,6 +120,7 @@ def create_products(count=10):
 def create_orders(customers, products, count=15):
     """Create orders via GraphQL"""
     print(f"Creating {count} orders...")
+    print(f"creating orders with customers:{customers}")
 
     for _ in range(count):
         customer = random.choice(customers)
@@ -132,14 +141,15 @@ def create_orders(customers, products, count=15):
         """
         variables = {
             "input": {
-                "customerId": customer['id'],
-                "productIds": [p['id'] for p in product_sample],
+                "customerId": customer['databaseId'],
+                "productIds": [p['databaseId'] for p in product_sample],
                 "orderDate": (datetime.now() -
                               timedelta(days=random.randint(0, 90)))
                 .isoformat()
             }
         }
         result = execute_graphql(query, variables)
+        print("order result:", result)
         print(f"Created order: {result['data']['createOrder']['order']['id']}")
 
 

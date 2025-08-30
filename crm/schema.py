@@ -9,22 +9,32 @@ from graphql import GraphQLError
 from django.db import transaction
 
 
-from .models import Customer, Product, Order
+from crm.models import Customer, Product, Order
 from .filters import CustomerFilter, OrderFilter, ProductFilter
 
 
 class CustomerType(DjangoObjectType):
+    database_id = graphene.Int()
+
     class Meta:
         model = Customer
         interfaces = (graphene.relay.Node, )
         filterset_class = CustomerFilter
 
+    def resolve_database_id(self, info):
+        return self.id
+
 
 class ProductType(DjangoObjectType):
+    database_id = graphene.Int()
+
     class Meta:
         model = Product
         interfaces = (graphene.relay.Node,)
         filterset_class = ProductFilter
+
+    def resolve_database_id(self, info):
+        return self.id
 
 
 class OrderType(DjangoObjectType):
@@ -34,6 +44,9 @@ class OrderType(DjangoObjectType):
         model = Order
         interfaces = (graphene.relay.Node,)
         filterset_class = OrderFilter
+
+    def resolve_products(self, info):
+        return self.products.all()
 
 
 class CustomerInput(graphene.InputObjectType):
@@ -66,11 +79,12 @@ class CreateCustomer(graphene.Mutation):
     def validate_phone_format(phone):
         if phone and not re.match(r"^(\+\d{1,3}[-]?)?\d{7,10}$", phone):
             raise GraphQLError(
-                "Invalid phone format. Use +1234567890 or 123-456-7890")
+                "Invalid phone format. Use +1234567890 or 123-456-7890 NOT:"
+            )
 
     def mutate(self, info, input):
         try:
-            CreateCustomer.validate_phone(input.phone)
+            CreateCustomer.validate_phone_format(input.phone)
             customer = Customer(
                 name=input.name,
                 email=input.email,
@@ -163,22 +177,23 @@ class CreateOrder(graphene.Mutation):
         products = []
         total_amount = 0
 
-        for product_id in input.product_ids:
-            try:
-                product = Product.objects.get(pk=product_id)
-                products.append(product)
-                total_amount += Decimal(product.price)
-            except Product.DoesNotExist:
-                raise GraphQLError(
-                    f"Product with ID {product_id} does not exist")
-
-        order = Order(
+        order = Order.objects.create(
             customer=customer,
             total_amount=total_amount,
             order_date=input.order_date if input.order_date else None
         )
 
-        order.products.set(products)
+        for product_id in input.product_ids:
+            try:
+                product = Product.objects.get(pk=product_id)
+                products.append(product)
+                order.products.add(product)
+                total_amount += Decimal(product.price)
+            except Product.DoesNotExist:
+                raise GraphQLError(
+                    f"Product with ID {product_id} does not exist")
+
+        # order.products.set(products)
         order.full_clean()
         order.save()
         return CreateOrder(order=order)
@@ -195,7 +210,7 @@ class Query(graphene.ObjectType):
         return Customer.objects.get(pk=id)
 
 
-class UpdateLowStockProducts(graphene.Mutaation):
+class UpdateLowStockProducts(graphene.Mutation):
     class Arguments:
         pass
 
