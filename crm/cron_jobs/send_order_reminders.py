@@ -32,14 +32,14 @@ def execute_query(query, variables=None):
 
 
 def send_order_reminders():
-    GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
+    # GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
 
     seven_days_ago = (datetime.now() - timedelta(days=7)
                       ).strftime('%Y-%m-dT%H:%M:%S')
 
     # Create a GraphQL client using the defined transport
-    client = Client(transport=transport, headers={
-                    'Content-Type': 'application/json'})
+    # client = Client(transport=transport, headers={
+    #               'Content-Type': 'application/json'})
 
     query = '''
         query RecentOrders($since:DateTime!) {
