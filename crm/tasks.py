@@ -6,11 +6,11 @@ from gql import Client, gql
 # from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.requests import RequestsHTTPTransport
 
+GRAPHQL_ENDPOINT = "http://localhost:8000/graphql/"
+
 
 def execute_query(query, variables=None):
     """Execute a GraphQL query synchronously"""
-
-    GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
     try:
         transport = RequestsHTTPTransport(url=GRAPHQL_ENDPOINT)
         client = Client(transport=transport,

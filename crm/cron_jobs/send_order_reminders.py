@@ -18,10 +18,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 django.setup()
 
 
+GRAPHQL_ENDPOINT = "http://localhost:8000/graphql/"
+
+
 def execute_query(query, variables=None):
     """Execute a GraphQL query synchronously"""
 
-    GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
     try:
         transport = RequestsHTTPTransport(url=GRAPHQL_ENDPOINT)
         client = Client(transport=transport,
@@ -34,7 +36,7 @@ def execute_query(query, variables=None):
 
 
 def send_order_reminders():
-    # GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
+    # GRAPHQL_ENDPOINT = "http://localhost:8000/graphql/"
 
     seven_days_ago = (datetime.now() - timedelta(days=7)
                       ).strftime('%Y-%m-dT%H:%M:%S')
