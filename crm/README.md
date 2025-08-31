@@ -12,13 +12,12 @@ steps to:
 - Redis server installed and running
 - Python dependencies installed
 
-## Installation Steps
+## Install
 
 1. Install Redis:
    ```bash
    # Ubuntu/Debian
-   sudo apt-get install redis-server
-   OR sudo apt install redis-server
+   sudo apt-get install redis-server OR sudo apt install redis-server
    sudo systemctl enable redis-server
    sudo systemctl start redis-server
 
@@ -29,11 +28,11 @@ steps to:
 2. Install Python dependencies:
 
 ```bash
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 3. Run migrations:
 ```bash
-python3 manage.py migrate
+python manage.py migrate
 ```
 4. Start Celery worker:
 
@@ -67,4 +66,3 @@ OR
 ```bash
 watch /tmp/crm_report_log.txt.
 ```
- 
