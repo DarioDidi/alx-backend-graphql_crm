@@ -18,6 +18,7 @@ steps to:
    ```bash
    # Ubuntu/Debian
    sudo apt-get install redis-server
+   OR sudo apt install redis-server
    sudo systemctl enable redis-server
    sudo systemctl start redis-server
 
@@ -28,11 +29,11 @@ steps to:
 Install Python dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 Run migrations:
 ```bash
-python manage.py migrate
+python3 manage.py migrate
 ```
 Start Celery worker:
 
