@@ -2,11 +2,11 @@
 
 steps to:
     
-- InstallRedis and dependencies.
-- Run migrations (python manage.py migrate).
-- Start Celery worker (celery -A crm worker -l info).
-- Start Celery Beat (celery -A crm beat -l info).
-- Verify logs in /tmp/crm_report_log.txt.
+Install Redis and dependencies.
+Run migrations (python manage.py migrate).
+Start Celery worker (celery -A crm worker -l info).
+Start Celery Beat (celery -A crm beat -l info).
+Verify logs in /tmp/crm_report_log.txt.
 
 ## Prerequisites
 - Redis server installed and running
@@ -26,29 +26,29 @@ steps to:
    brew install redis
    brew services start redis
 
-Install Python dependencies:
+2. Install Python dependencies:
 
 ```bash
 pip3 install -r requirements.txt
 ```
-Run migrations:
+3. Run migrations:
 ```bash
 python3 manage.py migrate
 ```
-Start Celery worker:
+4. Start Celery worker:
 
 ```bash
 celery -A crm worker -l info
 ```
-Start Celery Beat (in separate terminal):
+5. Start Celery Beat (in separate terminal):
 
 
 ```bash
 celery -A crm beat -l info
 ```
-Verify logs in /tmp/crm_report_log.txt
 
-Monitoring
+6. Monitoring
+
 Check worker status:
 ```bash
 celery -A crm status
@@ -58,7 +58,7 @@ View scheduled tasks:
 celery -A crm inspect scheduled
 ```
 
-Verify logs in /tmp/crm_report_log.txt.
+7. Verify logs in /tmp/crm_report_log.txt.
 ```bash
 cat /tmp/crm_report_log.txt.
 ```
